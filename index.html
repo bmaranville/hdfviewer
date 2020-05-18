@@ -1,0 +1,232 @@
+<!doctype html>
+ 
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>NeXuS-HDF5 data reader</title>
+  <link rel="stylesheet" href="./main.css" inline="inline"/>
+  <script src="./main.js" inline="inline"></script>
+<style>
+.patheditor { 
+    color: blue;
+    cursor: pointer;
+}
+li.subdiritem { 
+    list-style-type: none; 
+    cursor: pointer;
+    color: blue;
+}
+li.fileitem {
+    cursor: pointer;
+    color: blue;
+    text-decoration: none;
+}
+
+pre.value {
+    user-select: all;
+}
+#status {text-align: center;}
+#statusline {float: left;}
+#active_file {
+    font-family: arial;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+</style>
+<style type="text/css">
+svg,
+canvas {
+  position: absolute;
+  image-rendering: optimizeSpeed;
+  image-rendering: crisp-edges;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+
+.axis-label {
+  font-size: 16px;
+  fill: black;
+}
+
+.axis .tick text {
+  font-size: 14px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.grid path {
+      stroke-width: 0;
+}
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+    shape-rendering: crispEdges;
+    user-select: none; 
+    -webkit-user-select: none; 
+    -moz-user-select: none;
+}
+ 
+.grid path {
+    stroke-width: 0;
+    fill: none;
+}
+ 
+path.hidden, g.hidden {
+    display: none;
+}
+
+g.legend rect.hidden {
+    fill-opacity: 0.1;
+}
+ 
+.axis .axis-label {
+    user-select: none; 
+    -webkit-user-select: none; 
+    -moz-user-select: none;
+}
+
+.legend, .tick {
+    user-select: none; 
+    -webkit-user-select: none; 
+    -moz-user-select: none;
+}
+     
+    .line {
+        fill: none;
+        stroke-width: 1.5px;
+    }
+    
+    .highlight {
+        stroke-width: 4.5px;
+    }
+     
+    .dot {
+        /* consider the stroke-with the mouse detect radius? */
+        stroke: transparent;
+        stroke-width: 10px;  
+        cursor: pointer;
+    }
+     
+    .dot:hover {
+        stroke: rgba(68, 127, 255, 0.3);
+    }
+    
+    rect {
+      fill: none;
+      user-select: none; 
+      -webkit-user-select: none; 
+      -moz-user-select: none;
+    }
+
+    rect.zoom {
+      stroke: steelblue;
+      fill-opacity: 0.5;
+    }
+    
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    div.footer {
+      height: 2em;
+    }
+    div#body_wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    div#center {
+        flex: 1;
+        padding: 8px;
+        background-color: #F6F6F6;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: row;
+    }
+    
+    div.header {
+      height: 2em;
+      background-color: #FFA500;
+    }
+</style>
+<style id="splitting">
+  .split {
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      overflow-y: auto;
+      overflow-x: hidden;
+  }
+  
+  .content {
+      border: 1px solid #C0C0C0;
+      box-shadow: inset 0 1px 2px #e4e4e4;
+      background-color: #fff;
+      padding: 10px;
+  }
+  
+  .gutter {
+      background-color: transparent;
+      background-repeat: no-repeat;
+      background-position: 50%;
+  }
+  
+  .gutter.gutter-horizontal {
+      cursor: col-resize;
+      /* background-image: url('../grips/vertical.png'); */
+  }
+  
+  .gutter.gutter-vertical {
+      cursor: row-resize;
+      /* background-image: url('../grips/horizontal.png'); */
+  }
+  
+  .split.split-horizontal,
+  .gutter.gutter-horizontal {
+      position: relative;
+  }
+</style>
+</head>
+<body>
+<div id="body_wrapper" class="body-wrapper">
+  <div id="top_panel" class="header">
+      <div id="status">
+          <span id="statusline">NeXuS-HDF5 file viewer</span>
+          <span id="active_file"></span>
+          <span id="instrument_name" class="instrument-name"></span>
+      </div>
+  </div>
+  <div id="center" class="split">
+    <div id="centerpane" class="content split split-horizontal">
+      <div id="fileid"></div>
+      <div id="treediv"></div>
+    </div>
+    <div id="right" class="content split split-horizontal">
+      <div id="device_values"></div>
+      <div id="device_attrs"></div>
+      <div id="device_values_alpha_num"></div>
+      <div id="link_target"></div>
+    </div>
+  </div>
+
+  <div id="bottom_panel" class="footer">
+    Load local file: <input type="file" id="datafile" style="display:inline-block;" />
+    <label>Loaded: <span class="loaded-file" id="loaded_file"></span></label>
+  </div>
+</div>
+
+</body>
+</html>
+
